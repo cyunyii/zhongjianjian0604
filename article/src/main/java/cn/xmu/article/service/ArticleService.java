@@ -30,11 +30,16 @@ public interface ArticleService {
                                               Integer page,
                                               Integer pageSize);
 
-//    /**
-//     * 更改文章的状态
-//     */
+    /**
+     * 更改文章的状态
+     */
     public void updateArticleStatus(String articleId, Integer pendingStatus);
-//
+
+    /**
+     * 关联文章和gridfs的html文件id
+     */
+    public void updateArticleToGridFS(String articleId, String articleMongoId);
+
     /**
      * 管理员查询文章列表
      */

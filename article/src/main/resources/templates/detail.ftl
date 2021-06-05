@@ -88,13 +88,13 @@
             <div class="left-social">
 
                 <div class="date-title">
-                    <span class="year">${articleDetail.publishTime?string('yyyy')}</span>
+                    <span class="year">2021</span>
                 </div>
                 <div class="back-year-line"></div>
 
-                <div class="date-md">${articleDetail.publishTime?string('MM/dd')}</div>
+                <div class="date-md">6/5</div>
 
-                <div class="date-times">${articleDetail.publishTime?string('HH:mm:ss')}</div>
+                <div class="date-times">11:30:04</div>
 
                 <div class="writer-name" @click="showWriter('${articleDetail.publishUserId}')">
                     ${articleDetail.publishUserName}
@@ -338,14 +338,14 @@
                 axios.defaults.withCredentials = true;
                 axios.post(articleServerUrl + "/portal/article/readArticle?articleId=" + articleId)
                     .then(res => {
-                    // console.log(JSON.stringify(res.data));
+                        // console.log(JSON.stringify(res.data));
 
-                    if (res.data.status == 200) {
+                        if (res.data.status == 200) {
 
-                } else {
-                    console.log(res.data.msg);
-                }
-            });
+                        } else {
+                            console.log(res.data.msg);
+                        }
+                    });
             },
 
             // 获得文章阅读数
@@ -374,18 +374,18 @@
                 axios.defaults.withCredentials = true;
                 axios.get(articleServerUrl + "/portal/article/detail?articleId=" + articleId)
                     .then(res => {
-                    // console.log(JSON.stringify(res.data));
+                        // console.log(JSON.stringify(res.data));
 
-                    if (res.data.status == 200) {
-                    var result = res.data.data;
-                    me.articleDetail = result;
-                    console.log(JSON.stringify(me.articleDetail));
+                        if (res.data.status == 200) {
+                            var result = res.data.data;
+                            me.articleDetail = result;
+                            console.log(JSON.stringify(me.articleDetail));
 
-                    $("#pageTitle").html(result.title);
-                } else {
-                    alert(res.data.msg);
-                }
-            });
+                            $("#pageTitle").html(result.title);
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    });
             },
 
             // 获得文章评论数
@@ -395,15 +395,15 @@
                 axios.defaults.withCredentials = true;
                 axios.get(articleServerUrl + "/comment/counts?articleId=" + me.articleId)
                     .then(res => {
-                    console.log(JSON.stringify(res.data));
+                        console.log(JSON.stringify(res.data));
 
-                if (res.data.status == 200) {
-                    var commentCounts = res.data.data;
-                    me.commentCounts = commentCounts;
-                } else {
-                    console.log(res.data.msg);
-                }
-            });
+                        if (res.data.status == 200) {
+                            var commentCounts = res.data.data;
+                            me.commentCounts = commentCounts;
+                        } else {
+                            console.log(res.data.msg);
+                        }
+                    });
             },
 
             // 获得文章的评论列表
@@ -415,24 +415,24 @@
                     "&page=" + page +
                     "&pageSize=" + pageSize)
                     .then(res => {
-                    console.log(JSON.stringify(res.data));
+                        console.log(JSON.stringify(res.data));
 
-                if (res.data.status == 200) {
-                    var grid = res.data.data;
-                    var commentList = grid.rows;
-                    me.commentList = commentList;
+                        if (res.data.status == 200) {
+                            var grid = res.data.data;
+                            var commentList = grid.rows;
+                            me.commentList = commentList;
 
-                    me.page = grid.page;  // 当前页数累加1，用于后续页面滚动分页
-                    var maxPage = grid.total; // 获得总页数
-                    var total = grid.records; // 获得总记录数
+                            me.page = grid.page;  // 当前页数累加1，用于后续页面滚动分页
+                            var maxPage = grid.total; // 获得总页数
+                            var total = grid.records; // 获得总记录数
 
-                    this.maxPage = maxPage;
-                    this.total = total;
+                            this.maxPage = maxPage;
+                            this.total = total;
 
-                } else {
-                    console.log(res.data.msg);
-                }
-            });
+                        } else {
+                            console.log(res.data.msg);
+                        }
+                    });
             },
 
             // 点击回复出现回复框
@@ -477,21 +477,21 @@
                     }
                 )
                     .then(res => {
-                    console.log(JSON.stringify(res.data));
+                        console.log(JSON.stringify(res.data));
 
-                if (res.data.status == 200) {
-                    // 清空评论框中内容
-                    $('#summernote').summernote('reset');
-                    $("#reply-to-" + fatherCommentId).val("");
+                        if (res.data.status == 200) {
+                            // 清空评论框中内容
+                            $('#summernote').summernote('reset');
+                            $("#reply-to-" + fatherCommentId).val("");
 
-                    // 重新查询评论与评论数
-                    me.getAllComments(1, 10);
-                    me.getCommentCounts();
-                } else {
-                    // alert(res.data.msg);
-                    alert(JSON.stringify(res.data.data));
-                }
-            });
+                            // 重新查询评论与评论数
+                            me.getAllComments(1, 10);
+                            me.getCommentCounts();
+                        } else {
+                            // alert(res.data.msg);
+                            alert(JSON.stringify(res.data.data));
+                        }
+                    });
             },
             // 用户回复其他用户的评论，点击后保存到后端
             replyToComment(fatherCommentId) {
@@ -511,16 +511,16 @@
                 axios.defaults.withCredentials = true;
                 axios.get(adminServerUrl + "/categoryMng/getCats")
                     .then(res => {
-                    console.log(JSON.stringify(res.data));
+                        console.log(JSON.stringify(res.data));
 
-                if (res.data.status == 200) {
-                    var catList = res.data.data;
-                    me.catList = catList;
-                    // console.log(catList);
-                } else {
-                    alert(res.data.msg);
-                }
-            });
+                        if (res.data.status == 200) {
+                            var catList = res.data.data;
+                            me.catList = catList;
+                            // console.log(catList);
+                        } else {
+                            alert(res.data.msg);
+                        }
+                    });
             },
             // 根据分类Id获得tag颜色
             getCatTagColor(catId) {
@@ -531,6 +531,23 @@
                         break;
                     }
                 }
+            },
+            // 格式化日期
+            formatData(times) {
+                var date = moment(times).format('YYYY-MM-DD hh:mm:ss');
+                return date;
+            },
+            formatDataYear(times) {
+                var date = moment(times).format('YYYY');
+                return date;
+            },
+            formatDataMonthDay(times) {
+                var date = moment(times).format('MM/DD');
+                return date;
+            },
+            formatDataTime(times) {
+                var date = moment(times).format('hh:mm:ss');
+                return date;
             },
             // 根据分类Id获得名称
             getCatName(catId) {

@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class IndexArticleVO {
 
-    private String id;
+    private Long id;
     private String title;
     private Integer categoryId;
     private Integer articleType;
@@ -23,11 +23,11 @@ public class IndexArticleVO {
 
     private AppUserVO publisherVO;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -48,7 +48,7 @@ public class AppUserMngServiceImpl extends BaseService implements AppUserMngServ
             criteria.andCreatedTimeGreaterThanOrEqualTo(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
         if (endDate != null) {
-            criteria.andCreatedTimeLessThanOrEqualTo(startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+            criteria.andCreatedTimeLessThanOrEqualTo(endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
 
         PageHelper.startPage(page, pageSize);

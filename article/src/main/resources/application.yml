@@ -53,6 +53,15 @@ spring:
         max-wait: -1
     # 连接超时时间（毫秒）
     timeout: 5000
+  data:
+    mongodb:
+      uri: mongodb://121.4.32.18:27017
+      database: middle_friendlink
+  freemarker:
+    charset: UTF-8
+    content-type: text/html
+    suffix: .ftl
+    template-loader-path: classpath:/templates/
 
 mybatis:
   #po对象的包
@@ -88,3 +97,10 @@ articleservice:
 #pagehelper分页插件配置
 pagehelper:
   helper-dialect: mysql
+
+# 定义freemarker生成的html位置
+freemarker:
+  html:
+    target: E:\COSfiles\Desktop\MW\freemarker_html
+    article: E:\COSfiles\Desktop\MW\news\portal\a
+

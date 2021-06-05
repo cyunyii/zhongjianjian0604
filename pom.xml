@@ -15,6 +15,7 @@
         <module>files</module>
         <module>admin</module>
         <module>article</module>
+        <module>article-html</module>
     </modules>
 
     <packaging>pom</packaging>
