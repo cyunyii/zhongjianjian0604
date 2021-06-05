@@ -30,11 +30,11 @@ public class CommentReplyBO {
     public String getNickname() {
         return nickname;
     }
-    public String getCommentUserId() {
+    public Long getCommentUserId() {
         return commentUserId;
     }
 
-    public void setCommentUserId(String commentUserId) {
+    public void setCommentUserId(Long commentUserId) {
         this.commentUserId = commentUserId;
     }
 
@@ -46,19 +46,19 @@ public class CommentReplyBO {
         this.content = content;
     }
 
-    public String getFatherId() {
+    public Long getFatherId() {
         return fatherId;
     }
 
-    public void setFatherId(String fatherId) {
+    public void setFatherId(Long fatherId) {
         this.fatherId = fatherId;
     }
 
-    public String getArticleId() {
+    public Long getArticleId() {
         return articleId;
     }
 
-    public void setArticleId(String articleId) {
+    public void setArticleId(Long articleId) {
         this.articleId = articleId;
     }
 
