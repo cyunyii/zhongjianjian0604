@@ -2,8 +2,10 @@ package cn.xmu.article.service.impl;
 
 import cn.xmu.api.BaseService;
 import cn.xmu.article.mapper.ArticlePoMapper;
+import cn.xmu.article.mapper.CategoryPoMapper;
 import cn.xmu.article.model.po.ArticlePo;
 import cn.xmu.article.model.po.ArticlePoExample;
+import cn.xmu.article.model.po.CategoryPo;
 import cn.xmu.article.service.ArticleService;
 import cn.xmu.enums.ArticleAppointType;
 import cn.xmu.enums.ArticleReviewStatus;
@@ -35,6 +37,9 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
 //    @Autowired
 //    private Sid sid;
 
+    @Autowired
+    private CategoryPoMapper categoryPoMapper;
+
     public static LocalDateTime date2LocalDateTime(Date date) {
         if(null == date) {
             return null;
@@ -47,19 +52,21 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
      */
     @Transactional
     @Override
-    public void createArticle(NewArticleBO newArticleBO, Category category) {
-
+    public void createArticle(NewArticleBO newArticleBO) {
 //        String articleId = sid.nextShort();
 
         ArticlePo article = new ArticlePo();
         BeanUtils.copyProperties(newArticleBO, article);
 
 //        article.setId(Long.parseLong(articleId));
-        article.setCategoryId(category.getId());
+        CategoryPo categoryPo=categoryPoMapper.selectByPrimaryKey(newArticleBO.getCategoryId());
+        if (categoryPo.getId()!=newArticleBO.getCategoryId()){
+            article.setCategoryId(newArticleBO.getCategoryId());
+
+        }
         article.setArticleStatus(ArticleReviewStatus.REVIEWING.type);
         article.setCommentCounts(0);
         article.setReadCounts(0);
-
 
 
         article.setIsDelete(YesOrNo.NO.type);

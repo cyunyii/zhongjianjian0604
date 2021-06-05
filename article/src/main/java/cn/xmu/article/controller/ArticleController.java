@@ -53,27 +53,27 @@ public class ArticleController extends BaseController implements ArticleControll
         }
 
         // 判断分类id是否存在
-        String allCatJson = redis.get(REDIS_ALL_CATEGORY);
-        Category temp = null;
-        if (StringUtils.isBlank(allCatJson)) {
-            return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
-        } else {
-            List<Category> catList =
-                    JsonUtils.jsonToList(allCatJson, Category.class);
-            for (Category c : catList) {
-                if(c.getId() == newArticleBO.getCategoryId()) {
-                    temp = c;
-                    break;
-                }
-            }
-            if (temp == null) {
-                return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CATEGORY_NOT_EXIST_ERROR);
-            }
-        }
+//        String allCatJson = redis.get(REDIS_ALL_CATEGORY);
+//        Category temp = null;
+//        if (StringUtils.isBlank(allCatJson)) {
+//            return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
+//        } else {
+//            List<Category> catList =
+//                    JsonUtils.jsonToList(allCatJson, Category.class);
+//            for (Category c : catList) {
+//                if(c.getId() == newArticleBO.getCategoryId()) {
+//                    temp = c;
+//                    break;
+//                }
+//            }
+//            if (temp == null) {
+//                return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CATEGORY_NOT_EXIST_ERROR);
+//            }
+//        }
 
 //        System.out.println(newArticleBO.toString());
 
-        articleService.createArticle(newArticleBO, temp);
+        articleService.createArticle(newArticleBO);
 
         return GraceJSONResult.ok();
     }

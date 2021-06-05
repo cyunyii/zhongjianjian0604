@@ -12,7 +12,7 @@ public interface ArticleService {
     /**
      * 发布文章
      */
-    public void createArticle(NewArticleBO newArticleBO, Category category);
+    public void createArticle(NewArticleBO newArticleBO);
 
 //    /**
 //     * 更新定时发布为即时发布
