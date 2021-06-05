@@ -10,7 +10,7 @@ public class ArticleDetailVO {
     private Integer categoryId;
     private String categoryName;
     private String publishUserId;
-    private Date publishTime;
+    private LocalDateTime publishTime;
     private String content;
 
     private String publishUserName;
@@ -64,11 +64,11 @@ public class ArticleDetailVO {
         this.publishUserName = publishUserName;
     }
 
-    public Date getPublishTime() {
+    public LocalDateTime getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(Date publishTime) {
+    public void setPublishTime(LocalDateTime publishTime) {
         this.publishTime = publishTime;
     }
 
