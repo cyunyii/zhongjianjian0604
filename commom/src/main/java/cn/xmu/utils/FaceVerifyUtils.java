@@ -10,6 +10,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
@@ -26,10 +27,13 @@ import java.util.Map;
 import java.util.SimpleTimeZone;
 
 @Component
+@EnableConfigurationProperties(AliyunResource.class)
 public class FaceVerifyUtils {
 
     final static Logger logger = LoggerFactory.getLogger(FaceVerifyUtils.class);
 
+    String secret="HmNgqjyK8U72My3Sd11GHUFBq1L1Xy";
+    String aliID="LTAI5tDK6pqgRjXWMoZ5mpoo";
     @Autowired
     private AliyunResource aliyunResource;
 
@@ -125,9 +129,9 @@ public class FaceVerifyUtils {
             String stringToSign = method + "\n" + accept + "\n" + bodyMd5 + "\n" + content_type + "\n" + date + "\n"
                     + path;
             // 2.计算 HMAC-SHA1
-            String signature = HMACSha1(stringToSign, aliyunResource.getAccessKeySecret());
+            String signature = HMACSha1(stringToSign, secret);
             // 3.得到 authorization header
-            String authHeader = "Dataplus " + aliyunResource.getAccessKeyID() + ":" + signature;
+            String authHeader = "Dataplus " + aliID + ":" + signature;
             // 打开和URL之间的连接
             URLConnection conn = realUrl.openConnection();
             // 设置通用的请求属性
@@ -241,14 +245,15 @@ public class FaceVerifyUtils {
         return Base64.encodeBase64String(data.toByteArray());
     }
 
-//    public static void main(String[] args) {
-//        String face3 = "http://122.152.205.72:88/group1/M00/00/05/CpoxxF5MvvGAfnLXAAIHiv37wNk363.jpg";
-//        String face4 = "http://122.152.205.72:88/group1/M00/00/05/CpoxxF5Mv3yAH74mAACOiTd9pO4462.jpg";
-//
-//        boolean result = new FaceVerifyUtils().faceVerify(FaceVerifyType.IMAGE_URL.type, face3, face4, 60);
-//
-//        logger.info("人脸对比是否成功：{}", result);
-//    }
+    public static void main(String[] args) {
+        String face3 = "http://122.152.205.72:88/group1/M00/00/05/CpoxxF5MvvGAfnLXAAIHiv37wNk363.jpg";
+        String face4 = "http://122.152.205.72:88/group1/M00/00/05/CpoxxF5Mv3yAH74mAACOiTd9pO4462.jpg";
+
+//        System.out.println();
+        boolean result = new FaceVerifyUtils().faceVerify(FaceVerifyType.IMAGE_URL.type, face3, face4, 60);
+
+        logger.info("人脸对比是否成功：{}", result);
+    }
 
 }
 

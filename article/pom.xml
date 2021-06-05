@@ -53,6 +53,12 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- freemarker 依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

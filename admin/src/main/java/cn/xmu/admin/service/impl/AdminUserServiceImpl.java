@@ -35,7 +35,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         AdminPoExample.Criteria criteria = adminPoExample.createCriteria();
 
 
-        criteria.andAdminNameEqualTo(username);
+        criteria.andUsernameEqualTo(username);
 
         List<AdminPo> admin = adminUserMapper.selectByExample(adminPoExample);
         if(admin.size()==0){

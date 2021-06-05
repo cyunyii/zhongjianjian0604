@@ -7,21 +7,37 @@ import cn.xmu.enums.ArticleCoverType;
 import cn.xmu.enums.ArticleReviewStatus;
 import cn.xmu.enums.JsonUtils;
 import cn.xmu.enums.YesOrNo;
+import cn.xmu.exception.GraceException;
 import cn.xmu.grace.result.GraceJSONResult;
 import cn.xmu.grace.result.ResponseStatusEnum;
 import cn.xmu.pojo.Category;
 import cn.xmu.pojo.bo.NewArticleBO;
+import cn.xmu.pojo.vo.ArticleDetailVO;
 import cn.xmu.utils.PagedGridResult;
+import com.mongodb.client.gridfs.GridFSBucket;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +169,108 @@ public class ArticleController extends BaseController implements ArticleControll
         // 保存到数据库，更改文章的状态为审核成功或者失败
         articleService.updateArticleStatus(articleId, pendingStatus);
 
+        if (pendingStatus == ArticleReviewStatus.SUCCESS.type) {
+            // 审核成功，生成文章详情页静态html
+            try {
+//                createArticleHTML(articleId);
+                String articleMongoId = createArticleHTMLToGridFS(articleId);
+
+                // 存储到对应的文章，进行关联保存
+                articleService.updateArticleToGridFS(articleId, articleMongoId);
+                // 调用消费端，执行下载html
+                doDownloadArticleHTML(articleId, articleMongoId);
+//
+//                // 发送消息到mq队列，让消费者监听并且执行下载html
+//                doDownloadArticleHTMLByMQ(articleId, articleMongoId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return GraceJSONResult.ok();
+    }
+
+    @Value("${freemarker.html.article}")
+    private String articlePath;
+
+    // 文章生成HTML
+    public void createArticleHTML(String articleId) throws Exception {
+
+        Configuration cfg = new Configuration(Configuration.getVersion());
+        String classpath = this.getClass().getResource("/").getPath();
+        cfg.setDirectoryForTemplateLoading(new File(classpath + "templates"));
+
+        Template template = cfg.getTemplate("detail.ftl", "utf-8");
+
+        // 获得文章的详情数据
+        ArticleDetailVO detailVO = getArticleDetail(articleId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("articleDetail", detailVO);
+
+        File tempDic = new File(articlePath);
+        if (!tempDic.exists()) {
+            tempDic.mkdirs();
+        }
+
+        String path = articlePath + File.separator + detailVO.getId() + ".html";
+
+        Writer out = new FileWriter(path);
+        template.process(map, out);
+        out.close();
+    }
+
+    @Autowired
+    private GridFSBucket gridFSBucket;
+
+    // 文章生成HTML
+    public String createArticleHTMLToGridFS(String articleId) throws Exception {
+
+        Configuration cfg = new Configuration(Configuration.getVersion());
+        String classpath = this.getClass().getResource("/").getPath();
+        cfg.setDirectoryForTemplateLoading(new File(classpath + "templates"));
+
+        Template template = cfg.getTemplate("detail.ftl", "utf-8");
+
+        // 获得文章的详情数据
+        ArticleDetailVO detailVO = getArticleDetail(articleId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("articleDetail", detailVO);
+
+        String htmlContent = FreeMarkerTemplateUtils.processTemplateIntoString(template, map);
+//        System.out.println(htmlContent);
+
+        InputStream inputStream = IOUtils.toInputStream(htmlContent);
+        ObjectId fileId = gridFSBucket.uploadFromStream(detailVO.getId() + ".html",inputStream);
+        return fileId.toString();
+    }
+
+    // 发起远程调用rest，获得文章详情数据
+    public ArticleDetailVO getArticleDetail(String articleId) {
+        String url
+                = "http://localhost:8001/portal/article/detail?articleId=" + articleId;
+        ResponseEntity<GraceJSONResult> responseEntity
+                = restTemplate.getForEntity(url, GraceJSONResult.class);
+        GraceJSONResult bodyResult = responseEntity.getBody();
+        ArticleDetailVO detailVO = null;
+        if (bodyResult.getStatus() == 200) {
+            String detailJson = JsonUtils.objectToJson(bodyResult.getData());
+            detailVO = JsonUtils.jsonToPojo(detailJson, ArticleDetailVO.class);
+        }
+        return detailVO;
+    }
+
+    private void doDownloadArticleHTML(String articleId, String articleMongoId) {
+
+        String url =
+                "http://localhost:8002/article/html/download?articleId="
+                        + articleId +
+                        "&articleMongoId="
+                        + articleMongoId;
+        ResponseEntity<Integer> responseEntity = restTemplate.getForEntity(url, Integer.class);
+        int status = responseEntity.getBody();
+        if (status != HttpStatus.OK.value()) {
+            GraceException.display(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
+        }
     }
 
     @Override

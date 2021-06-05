@@ -12,6 +12,7 @@ import cn.xmu.enums.ArticleReviewStatus;
 import cn.xmu.enums.YesOrNo;
 import cn.xmu.exception.GraceException;
 import cn.xmu.grace.result.ResponseStatusEnum;
+import cn.xmu.pojo.Article;
 import cn.xmu.pojo.Category;
 import cn.xmu.pojo.bo.NewArticleBO;
 import cn.xmu.utils.PagedGridResult;
@@ -183,6 +184,16 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
             GraceException.display(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
         }
     }
+
+    @Transactional
+    @Override
+    public void updateArticleToGridFS(String articleId, String articleMongoId) {
+        ArticlePo pendingArticle = new ArticlePo();
+        pendingArticle.setId(Long.parseLong(articleId));
+        pendingArticle.setMongoFileId(articleMongoId);
+        articlePoMapper.updateByPrimaryKeySelective(pendingArticle);
+    }
+
     @Transactional
     @Override
     public void withdrawArticle(String userId, String articleId) {
