@@ -128,15 +128,13 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         return gridResult;
     }
 
-    private AppUserVO getUserIfPublisher(String publisherId,
+   private AppUserVO getUserIfPublisher(String publisherId,
                                          List<AppUserVO> publisherList) {
         for (AppUserVO user : publisherList) {
-            if (user.getId().equalsIgnoreCase(publisherId)) {
+            if (String.valueOf(user.getId()).equalsIgnoreCase(publisherId)) {
                 return user;
             }
         }
-        return null;
-    }
 //单独write
 //    // 注入服务发现，可以获得已经注册的服务相关信息
 //    @Autowired
