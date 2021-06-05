@@ -12,13 +12,13 @@ public class IndexArticleVO {
     private Integer isAppoint;
     private Integer articleStatus;
     private String publishUserId;
-    private Date publishTime;
+    private LocalDateTime publishTime;
     private Integer readCounts;
     private Integer commentCounts;
     private String mongoFileId;
     private Integer isDelete;
-    private Date createTime;
-    private Date updateTime;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
     private String content;
 
     private AppUserVO publisherVO;
@@ -87,11 +87,11 @@ public class IndexArticleVO {
         this.publishUserId = publishUserId;
     }
 
-    public Date getPublishTime() {
+    public LocalDateTime getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(Date publishTime) {
+    public void setPublishTime(LocalDateTime publishTime) {
         this.publishTime = publishTime;
     }
 
@@ -127,19 +127,19 @@ public class IndexArticleVO {
         this.isDelete = isDelete;
     }
 
-    public Date getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 
