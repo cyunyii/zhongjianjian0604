@@ -5,3 +5,4 @@
 - 2.陈芸衣修改user的AppUserMngServiceImpl文件
 - 3.实现第九章，页面静态化（需要使用进阶前端）
 - 4.修改article的pomapper，实现example修改，更改了article的删除文章部分的逻辑代码（将物理删除改为逻辑删除）
+- 5.wmc修改，comment（model、controller），AppuserVo(String-》long id)，article（model 部分string-》long id）
