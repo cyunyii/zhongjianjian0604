@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AppUserVO {
-    private String id;
+   private Long id;
     private String nickname;
     private String face;
     private Integer activeStatus;
