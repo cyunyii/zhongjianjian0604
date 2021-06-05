@@ -204,17 +204,17 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         return articlePoExample;
     }
 
-
-
     @Override
     public PagedGridResult queryAllArticleListAdmin(Integer status, Integer page, Integer pageSize) {
 
         // 审核中是机审和人审核的两个状态，所以需要单独判断??
-
-
         ArticlePoExample articlePoExample=new ArticlePoExample();
         ArticlePoExample.Criteria criteria = articlePoExample.createCriteria();
-        criteria.andArticleStatusEqualTo(status);
+        if(status != null && status == 12)
+            criteria.andArticleStatusBetween(ArticleReviewStatus.REVIEWING.type,ArticleReviewStatus.WAITING_MANUAL.type);
+        else if(status != null)
+            criteria.andArticleStatusEqualTo(status);
+        else{}
         criteria.andIsDeleteEqualTo(YesOrNo.NO.type);
         List<Integer> type=new ArrayList<Integer>();
         type.add(ArticleReviewStatus.REVIEWING.type);   //索引为0  //.add(e)
