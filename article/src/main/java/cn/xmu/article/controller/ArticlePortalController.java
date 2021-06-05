@@ -131,7 +131,7 @@ public class ArticlePortalController extends BaseController implements ArticlePo
     private AppUserVO getUserIfPublisher(String publisherId,
                                          List<AppUserVO> publisherList) {
         for (AppUserVO user : publisherList) {
-            if (user.getId().equalsIgnoreCase(publisherId)) {
+            if (String.valueOf(user.getId()).equalsIgnoreCase(publisherId)) {
                 return user;
             }
         }

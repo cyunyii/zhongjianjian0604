@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class CommentsVO {
 
-    private String commentId;
+    private Long commentId;
     private String fatherId;
     private String articleId;
     private String commentUserId;
@@ -23,11 +23,11 @@ public class CommentsVO {
         this.commentUserFace = commentUserFace;
     }
 
-    public String getCommentId() {
+    public Long getCommentId() {
         return commentId;
     }
 
-    public void setCommentId(String commentId) {
+    public void setCommentId(Long commentId) {
         this.commentId = commentId;
     }
 

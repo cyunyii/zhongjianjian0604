@@ -38,7 +38,7 @@ public class CommentController extends BaseController implements CommentControll
 //        }
 
         // 1. 根据留言用户的id查询他的昵称，用于存入到数据表进行字段的冗余处理，从而避免多表关联查询的性能影响
-        String userId = commentReplyBO.getCommentUserId();
+        String userId = String.valueOf(commentReplyBO.getCommentUserId());
 
         // 2. 发起restTemplate调用用户服务，获得用户侧昵称
         Set<String> idSet = new HashSet<>();
@@ -48,8 +48,8 @@ public class CommentController extends BaseController implements CommentControll
         String face = getBasicUserList(idSet).get(0).getFace();
 
         // 3. 保存用户评论的信息到数据库
-        commentPortalService.createComment(commentReplyBO.getArticleId(),
-                commentReplyBO.getFatherId(),
+        commentPortalService.createComment(String.valueOf(commentReplyBO.getArticleId()),
+                String.valueOf(commentReplyBO.getFatherId()),
                 commentReplyBO.getContent(),
                 userId,
                 nickname,
@@ -61,10 +61,10 @@ public class CommentController extends BaseController implements CommentControll
 
 
     @Override
-    public GraceJSONResult commentCounts(String articleId) {
+    public GraceJSONResult commentCounts(Long articleId) {
 
         Integer counts =
-                getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS + ":" + articleId);
+                getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS + ":" + String.valueOf(articleId));
 
         return GraceJSONResult.ok(counts);
     }
@@ -82,6 +82,7 @@ public class CommentController extends BaseController implements CommentControll
         }
 
         PagedGridResult gridResult = commentPortalService.queryArticleComments(articleId, page, pageSize);
+
         return GraceJSONResult.ok(gridResult);
     }
 
@@ -95,13 +96,13 @@ public class CommentController extends BaseController implements CommentControll
             pageSize = COMMON_PAGE_SIZE;
         }
 
-        PagedGridResult gridResult = commentPortalService.queryWriterCommentsMng(writerId, page, pageSize);
+        PagedGridResult gridResult = commentPortalService.queryWriterCommentsMng(String.valueOf(writerId), page, pageSize);
         return GraceJSONResult.ok(gridResult);
     }
 
     @Override
-    public GraceJSONResult delete(String writerId, String commentId) {
-        commentPortalService.deleteComment(writerId, commentId);
+    public GraceJSONResult delete(Long writerId, Long commentId) {
+        commentPortalService.deleteComment(String.valueOf(writerId), String.valueOf(commentId));
         return GraceJSONResult.ok();
     }
 }

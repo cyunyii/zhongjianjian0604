@@ -1,26 +1,26 @@
 package cn.xmu.pojo.vo;
 
 import java.util.Date;
-
+import java.time.LocalDateTime;
 public class ArticleDetailVO {
 
-    private String id;
+    private Long id;
     private String title;
     private String cover;
     private Integer categoryId;
     private String categoryName;
     private String publishUserId;
-    private Date publishTime;
+    private LocalDateTime publishTime;
     private String content;
 
     private String publishUserName;
     private Integer readCounts;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -64,11 +64,11 @@ public class ArticleDetailVO {
         this.publishUserName = publishUserName;
     }
 
-    public Date getPublishTime() {
+    public LocalDateTime getPublishTime() {
         return publishTime;
     }
 
-    public void setPublishTime(Date publishTime) {
+    public void setPublishTime(LocalDateTime publishTime) {
         this.publishTime = publishTime;
     }
 

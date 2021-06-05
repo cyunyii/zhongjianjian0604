@@ -71,5 +71,5 @@ pagehelper:
 freemarker:
   html:
     target: E:\COSfiles\Desktop\MW\freemarker_html
-    article: E:\COSfiles\Desktop\MW\front-end\imooc-news\portal\a
+    article: E:\COSfiles\Desktop\MW\news\portal\a
 

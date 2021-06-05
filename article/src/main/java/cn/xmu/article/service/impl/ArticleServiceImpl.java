@@ -12,16 +12,19 @@ import cn.xmu.enums.ArticleReviewStatus;
 import cn.xmu.enums.YesOrNo;
 import cn.xmu.exception.GraceException;
 import cn.xmu.grace.result.ResponseStatusEnum;
-import cn.xmu.pojo.Article;
-import cn.xmu.pojo.Category;
 import cn.xmu.pojo.bo.NewArticleBO;
 import cn.xmu.utils.PagedGridResult;
 import com.github.pagehelper.PageHelper;
+import com.mongodb.client.gridfs.GridFSBucket;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -162,13 +165,50 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         return setterPagedGrid(list, page);
     }
 
-
-
     @Transactional
     @Override
     public void deleteArticle(String userId, String articleId) {
-        articlePoMapper.deleteByPrimaryKey(Long.parseLong(articleId));
+        ArticlePoExample articleExample = makeExampleCriteria(userId,articleId);
 
+        ArticlePo pending = new ArticlePo();
+        pending.setIsDelete(YesOrNo.YES.type);
+
+        int result = articlePoMapper.updateByExampleSelective(pending, articleExample);
+        if (result != 1) {
+            GraceException.display(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
+        }
+
+        deleteHTML(articleId);
+
+    }
+
+    @Autowired
+    private GridFSBucket gridFSBucket;
+    /**
+     * 文章撤回删除后，删除静态化的html
+     */
+    private void deleteHTML(String articleId) {
+        // 1. 查询文章的mongoFileId
+        ArticlePo pending = articlePoMapper.selectByPrimaryKey(Long.parseLong(articleId));
+        String articleMongoId = pending.getMongoFileId();
+
+        // 2. 删除GridFS上的文件
+        gridFSBucket.delete(new ObjectId(articleMongoId));
+
+        // 3. 删除消费端的HTML文件
+        doDeleteArticleHTML(articleId);
+//        doDeleteArticleHTMLByMQ(articleId);
+    }
+
+    @Autowired
+    public RestTemplate restTemplate;
+    private void doDeleteArticleHTML(String articleId) {
+        String url = "http://localhost:8002/article/html/delete?articleId=" + articleId;
+        ResponseEntity<Integer> responseEntity = restTemplate.getForEntity(url, Integer.class);
+        int status = responseEntity.getBody();
+        if (status != HttpStatus.OK.value()) {
+            GraceException.display(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
+        }
     }
 
     @Transactional
@@ -217,7 +257,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     private ArticlePoExample makeExampleCriteria(String userId, String articleId) {
         ArticlePoExample articlePoExample = new ArticlePoExample();
         ArticlePoExample.Criteria criteria = articlePoExample.createCriteria();
-        criteria.andPublishUserIdEqualTo( userId);
+        criteria.andPublishUserIdEqualTo(userId);
         criteria.andIdEqualTo(Long.parseLong(articleId));
         return articlePoExample;
     }
@@ -226,11 +266,12 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     public PagedGridResult queryAllArticleListAdmin(Integer status, Integer page, Integer pageSize) {
 
         // 审核中是机审和人审核的两个状态，所以需要单独判断??
+        // 发现刚刚刷新的时候status返回的是null但是点击的时候又返回0了不知道怎么回事所以还是加了个判断
         ArticlePoExample articlePoExample=new ArticlePoExample();
         ArticlePoExample.Criteria criteria = articlePoExample.createCriteria();
         if(status != null && status == 12)
             criteria.andArticleStatusBetween(ArticleReviewStatus.REVIEWING.type,ArticleReviewStatus.WAITING_MANUAL.type);
-        else if(status != null)
+        else if(status != null && status != 0)
             criteria.andArticleStatusEqualTo(status);
         else{}
         criteria.andIsDeleteEqualTo(YesOrNo.NO.type);
