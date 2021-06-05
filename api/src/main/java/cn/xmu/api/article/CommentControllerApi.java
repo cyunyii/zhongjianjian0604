@@ -21,7 +21,7 @@ public interface CommentControllerApi {
 
     @GetMapping("counts")
     @ApiOperation(value = "用户评论数查询", notes = "用户评论数查询", httpMethod = "GET")
-    public GraceJSONResult commentCounts(@RequestParam String articleId);
+    public GraceJSONResult commentCounts(@RequestParam Long articleId);
 
     @GetMapping("list")
     @ApiOperation(value = "查询文章的所有评论列表", notes = "查询文章的所有评论列表", httpMethod = "GET")
@@ -40,6 +40,6 @@ public interface CommentControllerApi {
 
     @PostMapping("/delete")
     @ApiOperation(value = "作者删除评论", notes = "作者删除评论", httpMethod = "POST")
-    public GraceJSONResult delete(@RequestParam String writerId,
-                                  @RequestParam String commentId);
+    public GraceJSONResult delete(@RequestParam Long writerId,
+                                  @RequestParam Long commentId);
 }
