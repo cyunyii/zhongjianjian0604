@@ -42,7 +42,7 @@
         </commentGenerator>
 
         <!--数据库链接URL，用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
                         connectionURL="jdbc:mysql://121.4.32.18:3306/news?serverTimezone=GMT%2B8" userId="news" password="123456">
         </jdbcConnection>
         <javaTypeResolver>
@@ -130,6 +130,15 @@
         -->
 
         <table tableName="article" domainObjectName="ArticlePo"
+               enableCountByExample="true" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="false">
+            <!-- 如果设置为true，生成的model类会直接使用column本身的名字，而不会再使用驼峰命名方法，比如BORN_DATE，生成的属性名字就是BORN_DATE,而不会是bornDate -->
+            <property name="useActualColumnNames" value="false"/>
+            <!--mysql 配置-->
+            <generatedKey column="id" sqlStatement="Mysql" identity="false"/>
+        </table>
+        <table tableName="comments" domainObjectName="CommentPo"
                enableCountByExample="true" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="false">
