@@ -53,7 +53,7 @@ public class  ArticlePortalServiceImpl extends BaseService implements ArticlePor
 
 
         if (StringUtils.isNotBlank(keyword)) {
-            criteria.andTitleLike(keyword);
+            criteria.andTitleLike("%" + keyword+ "%");
             //criteria.andLike("title", "%" + keyword + "%");
         }
         if (category != null) {

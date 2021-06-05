@@ -42,6 +42,13 @@ spring:
     content-type: text/html
     suffix: .ftl
     template-loader-path: classpath:/templates/
+  rabbitmq:
+    #    host: 127.0.0.1
+    host: 121.4.32.18
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: news-dev
 
 articlehtmlservice:
   #是否对数据库中的未初始化的数据初始化
@@ -70,6 +77,6 @@ pagehelper:
 # 定义freemarker生成的html位置
 freemarker:
   html:
-    target: E:\COSfiles\Desktop\MW\freemarker_html
-    article: E:\COSfiles\Desktop\MW\news\portal\a
+    #    target: E:\COSfiles\Desktop\MW\freemarker_html
+    article: ../news/portal/a
 

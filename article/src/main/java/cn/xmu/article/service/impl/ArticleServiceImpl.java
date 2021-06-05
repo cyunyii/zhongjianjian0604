@@ -1,6 +1,7 @@
 package cn.xmu.article.service.impl;
 
 import cn.xmu.api.BaseService;
+import cn.xmu.api.config.RabbitMQConfig;
 import cn.xmu.article.mapper.ArticlePoMapper;
 import cn.xmu.article.mapper.CategoryPoMapper;
 import cn.xmu.article.model.po.ArticlePo;
@@ -18,6 +19,7 @@ import com.github.pagehelper.PageHelper;
 import com.mongodb.client.gridfs.GridFSBucket;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -196,8 +198,8 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         gridFSBucket.delete(new ObjectId(articleMongoId));
 
         // 3. 删除消费端的HTML文件
-        doDeleteArticleHTML(articleId);
-//        doDeleteArticleHTMLByMQ(articleId);
+//        doDeleteArticleHTML(articleId);
+        doDeleteArticleHTMLByMQ(articleId);
     }
 
     @Autowired
@@ -232,6 +234,13 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         pendingArticle.setId(Long.parseLong(articleId));
         pendingArticle.setMongoFileId(articleMongoId);
         articlePoMapper.updateByPrimaryKeySelective(pendingArticle);
+    }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    private void doDeleteArticleHTMLByMQ(String articleId) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_ARTICLE,
+                "article.html.download.do", articleId);
     }
 
     @Transactional
