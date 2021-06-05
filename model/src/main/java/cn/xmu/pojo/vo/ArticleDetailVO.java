@@ -1,7 +1,7 @@
 package cn.xmu.pojo.vo;
 
 import java.util.Date;
-
+import java.time.LocalDateTime;
 public class ArticleDetailVO {
 
     private Long id;
