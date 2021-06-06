@@ -1,7 +1,12 @@
 package cn.xmu.pojo.vo;
 
-import java.util.Date;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import java.time.LocalDateTime;
+
 public class ArticleDetailVO {
 
     private Long id;
@@ -10,6 +15,8 @@ public class ArticleDetailVO {
     private Integer categoryId;
     private String categoryName;
     private String publishUserId;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime publishTime;
     private String content;
 
